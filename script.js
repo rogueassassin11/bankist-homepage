@@ -30,10 +30,43 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
+///////////////////////////////////////
+// SMOOTH SCROLLING
+
+const btnScrollTO = document.querySelector('.btn--scroll-to');
+const section1 = document.querySelector('#section--1');
+
+btnScrollTO.addEventListener('click', function (e) {
+  const s1coords = section1.getBoundingClientRect();
+  console.log(s1coords);
+
+  //to get offset from top of window
+  console.log('Current scroll (x/y)', window.pageXOffset, pageYOffset);
+
+  //to get height and width of viewport
+  console.log(
+    'height/width viewport',
+    document.documentElement.clientHeight,
+    document.documentElement.clientWidth
+  );
+
+  //scrolling (add the scroll position from the offset)
+  // window.scrollTo(s1coords.left + window.pageXOffset, s1coords.top + window.pageYOffset);
+
+  // window.scrollTo({
+  //   left: s1coords.left + window.pageXOffset,
+  //   top: s1coords.top + window.pageYOffset,
+  //   behavior: 'smooth',
+  // });
+
+  //only used by modern browsers:
+  section1.scrollIntoView({ behavior: 'smooth' });
+});
+
 /************************************************/
 /* SELECTING / CREATING / DELETING ELEMENTS
 /************************************************/
-
+/* 
 // Selecting elements
 console.log(document.documentElement);
 console.log(document.head);
@@ -72,4 +105,84 @@ document
   .addEventListener('click', function () {
     message.remove(); //recent addition
     // message.parentElement.removeChild(message); old way
-  });
+  }); */
+
+/************************************************/
+/* STYLES / ATTRIBUTES / CLASSES
+/************************************************/
+/* 
+//styles
+message.style.backgroundColor = '#37383d';
+message.style.width = '120%';
+
+//you can only get the value of .style if set as inline
+console.log(message.style.backgroundColor);
+
+//to get value of styles
+console.log(getComputedStyle(message).color);
+console.log(getComputedStyle(message).height);
+
+message.style.height =
+  Number.parseFloat(getComputedStyle(message).height, 10) + 30 + 'px';
+
+// working with css variables
+document.documentElement.style.setProperty('--color-primary', 'orangered');
+
+// Attributes - you can only access expected properties
+const logo = document.querySelector('.nav__logo');
+console.log(logo.alt);
+console.log(logo.src);
+console.log(logo.className);
+
+logo.alt = 'Beautiful minimalist logo';
+
+//non-standard attributes
+console.log(logo.designer);
+console.log(logo.getAttribute('designer'));
+
+//setting attribute
+logo.setAttribute('company', 'Bankist');
+
+//gets the relative location
+logo.getAttribute('src');
+
+//relative and absolute
+const link = document.querySelector('.nav__link--btn');
+console.log(link.href);
+console.log(link.getAttribute('href'));
+
+//data attributes
+console.log(logo.dataset.versionNumber);
+
+// classes
+logo.classList.add('c');
+logo.classList.remove('c');
+logo.classList.toggle('c');
+logo.classList.contains('c');
+
+//don't use this:
+logo.className = 'juuzo'; //overrides all classes
+ */
+
+/************************************************/
+/* TYPES OF EVENTS
+/************************************************/
+
+const h1 = document.querySelector('h1');
+
+const alertH1 = function (e) {
+  alert('You are reading the heading :)');
+
+  //to listen to an event once - remove it
+  // h1.removeEventListener('mouseenter', alertH1);
+};
+
+//mouseenter is like css hover
+h1.addEventListener('mouseenter', alertH1);
+
+setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 3000);
+
+// //on event property (old)
+// h1.onmouseenter = function (e) {
+//   alert('You are reading the heading :)');
+// };
