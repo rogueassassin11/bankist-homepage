@@ -245,49 +245,95 @@ imgTargets.forEach(img => imgObserver.observe(img));
 
 ///////////////////////////////////////
 // SLIDER COMPONENT
+const slider = function () {
+  const slides = document.querySelectorAll('.slide');
+  const btnLeft = document.querySelector('.slider__btn--left');
+  const btnRight = document.querySelector('.slider__btn--right');
+  const dotContainer = document.querySelector('.dots');
 
-const slides = document.querySelectorAll('.slide');
-const btnLeft = document.querySelector('.slider__btn--left');
-const btnRight = document.querySelector('.slider__btn--right');
+  let curSlide = 0;
+  const maxSlide = slides.length;
 
-let curSlide = 0;
-const maxSlide = slides.length;
+  //Function
+  const createDots = function () {
+    slides.forEach(function (_, i) {
+      dotContainer.insertAdjacentHTML(
+        'beforeend',
+        `<button class="dots__dot" data-slide="${i}"></button>`
+      );
+    });
+  };
 
-//0% 100% 200% 300%
+  const activateDot = function (slide) {
+    document
+      .querySelectorAll('.dots__dot')
+      .forEach(dot => dot.classList.remove('dots__dot--active'));
 
-const goToSlide = function (slide) {
-  //-100%, 0%, 100%, 200%
-  slides.forEach(
-    (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
-  );
+    document
+      .querySelector(`.dots__dot[data-slide="${slide}"]`)
+      .classList.add('dots__dot--active');
+  };
+
+  //0% 100% 200% 300%
+  const goToSlide = function (slide) {
+    //-100%, 0%, 100%, 200%
+    slides.forEach(
+      (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
+    );
+  };
+
+  // next slide
+  const nextSlide = function () {
+    if (curSlide === maxSlide - 1) {
+      curSlide = 0;
+    } else {
+      curSlide++;
+    }
+
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
+
+  //previous slide
+  const prevSlide = function () {
+    if (curSlide === 0) {
+      curSlide = maxSlide - 1;
+    } else {
+      curSlide--;
+    }
+
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
+
+  const init = function () {
+    goToSlide(0);
+    createDots();
+    activateDot(0);
+  };
+  init();
+
+  //Event handlers
+  //click event for slider
+  btnRight.addEventListener('click', nextSlide);
+  btnLeft.addEventListener('click', prevSlide);
+
+  //keyboard event for slider
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') prevSlide();
+    e.key === 'ArrowRight' && nextSlide();
+  });
+
+  //event delegation for dots
+  dotContainer.addEventListener('click', function (e) {
+    if (e.target.classList.contains('dots__dot')) {
+      const { slide } = e.target.dataset;
+      goToSlide(slide);
+      activateDot(slide);
+    }
+  });
 };
-
-goToSlide(0);
-
-// next slide
-const nextSlide = function () {
-  if (curSlide === maxSlide - 1) {
-    curSlide = 0;
-  } else {
-    curSlide++;
-  }
-
-  goToSlide(curSlide);
-};
-
-//previous slide
-const prevSlide = function () {
-  if (curSlide === 0) {
-    curSlide = maxSlide - 1;
-  } else {
-    curSlide--;
-  }
-
-  goToSlide(curSlide);
-};
-
-btnRight.addEventListener('click', nextSlide);
-btnLeft.addEventListener('click', prevSlide);
+slider();
 
 /************************************************/
 /* SELECTING / CREATING / DELETING ELEMENTS
@@ -483,3 +529,37 @@ console.log(h1.parentElement.children);
   if (el !== h1) el.style.transform = 'scale(0.5)';
 });
  */
+
+/************************************************/
+/* DOM LIFECYCLE EVENTS
+/************************************************/
+/* 
+//when HTML is parsed event
+document.addEventListener('DOMContentLoaded', function (e) {
+  console.log(`HTML parsed and DOM tree built`);
+});
+
+//when complete page is loaded event
+window.addEventListener('load', function (e) {
+  console.log('Page fully loaded');
+});
+
+//before unload a user leaves a page - use when filling out a form / or others
+// window.addEventListener('beforeunload', function (e) {
+//   e.preventDefault();
+//   console.log(e);
+//   e.returnValue = '';
+// });
+ */
+
+/************************************************/
+/* DEFER AND ASYNC SCRIPT LOADING
+/************************************************/
+
+//put the JS Script at the body, so HTML parse script is fetch and executed -> if need to support old browsers
+
+//async and defer is not used to load script at the end part of the body
+
+//async in head - script is fetched asynchronously and executed immediately; not guaranteed to execute in order --> use only if order doesn't matter
+
+//defer in head - script is fetched asynchronously but executed after HTML is parsed; executes in order --> use this for third party scripts / or when needed to be in order
